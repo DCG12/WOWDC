@@ -1,7 +1,9 @@
 package com.example.user.wowdc;
 
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,5 +80,29 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void refresh() {
+        RefreshDataTask task = new RefreshDataTask();
+        task.execute();
+    }
+    private class RefreshDataTask extends AsyncTask<Void, Object, ArrayList<WOW>> {
+        @Override
+        protected ArrayList<WOW> doInBackground(Void... voids) {
+            APIWOW api = new APIWOW();
+            ArrayList<WOW> result = api.getInfoBoss();
+
+            Log.d("DEBUG", result.toString());
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<WOW> wow) {
+
+            super.onPostExecute(wow);
+
+            adapter.clear();
+            for (int i = 0; i < wow.size(); i++) {
+                adapter.add(wow.get(i).getName());
+            }
+        }
     }
 }
