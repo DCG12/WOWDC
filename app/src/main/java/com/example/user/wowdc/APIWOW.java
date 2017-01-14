@@ -24,9 +24,10 @@ public class APIWOW {
 
     }
 
-    static ArrayList<WOW> getLevelBoss() {
+    static ArrayList<WOW> getLevelBoss(String level) {
         Uri builtUri = Uri.parse(BASE_URL)
                 .buildUpon()
+                .appendQueryParameter("level", level)
                 .build();
         String url = builtUri.toString();
 

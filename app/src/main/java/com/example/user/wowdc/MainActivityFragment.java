@@ -1,6 +1,8 @@
 package com.example.user.wowdc;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,16 +40,9 @@ public class MainActivityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         ListView lvWOW = (ListView) view.findViewById(R.id.lvWOW);
-        String[] data = {
-                "Golem Ancestral",
-                "Goblin pequeño",
-                "Dragon de fuego",
-                "Angel de luz",
-                "Llamarada",
-                "Espectro",
-        };
 
-        items = new ArrayList<>(Arrays.asList(data));
+
+        items = new ArrayList<>();
         adapter = new ArrayAdapter<>(
                 getContext(),
                 R.layout.lv_wow_row,
@@ -86,10 +81,18 @@ public class MainActivityFragment extends Fragment {
     private class RefreshDataTask extends AsyncTask<Void, Object, ArrayList<WOW>> {
         @Override
         protected ArrayList<WOW> doInBackground(Void... voids) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            String level = preferences.getString("level", "80");
+            String Opciones = preferences.getString("todos", "nivel");
             APIWOW api = new APIWOW();
-            ArrayList<WOW> result = api.getInfoBoss();
+            ArrayList<WOW> result = null;
+            if (Opciones.equals("nivel")) {
+                result = api.getInfoBoss();
+            } else {
+                result = api.getLevelBoss(level);
+            }
 
-            Log.d("DEBUG", result.toString());
+            Log.d("DEBUG", result != null ? result.toString() : null);
 
             return result;
         }
@@ -101,7 +104,7 @@ public class MainActivityFragment extends Fragment {
 
             adapter.clear();
             for (int i = 0; i < wow.size(); i++) {
-                adapter.add(wow.get(i).getName());
+                adapter.add(wow.get(i).getName() + " " + wow.get(i).getLevel());
             }
         }
     }
