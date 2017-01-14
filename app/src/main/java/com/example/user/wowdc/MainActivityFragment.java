@@ -20,8 +20,8 @@ import android.view.MenuItem;
 
 public class MainActivityFragment extends Fragment {
 
-    private ArrayList<String> items;
-    private ArrayAdapter<String> adapter;
+    private ArrayList<WOW> items;
+    private WOWAdapter adapter;
 
     public MainActivityFragment() {
     }
@@ -43,10 +43,9 @@ public class MainActivityFragment extends Fragment {
 
 
         items = new ArrayList<>();
-        adapter = new ArrayAdapter<>(
+        adapter = new WOWAdapter(
                 getContext(),
                 R.layout.lv_wow_row,
-                R.id.tvWOW,
                 items
         );
         lvWOW.setAdapter(adapter);
@@ -72,6 +71,12 @@ public class MainActivityFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        refresh();
     }
 
     private void refresh() {
@@ -104,7 +109,7 @@ public class MainActivityFragment extends Fragment {
 
             adapter.clear();
             for (int i = 0; i < wow.size(); i++) {
-                adapter.add(wow.get(i).getName() + " " + wow.get(i).getLevel());
+                adapter.add(wow);
             }
         }
     }
